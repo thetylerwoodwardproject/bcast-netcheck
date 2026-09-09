@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bcast-netcheck"
+version = "0.1.0"
+description = "Concurrent, read-only network diagnostics for broadcast engineers"
+requires-python = ">=3.11"
+license = "MIT"
+readme = "README.md"
+dependencies = ["typer>=0.12,<1", "rich>=13,<15", "PyYAML>=6,<7", "dnspython>=2.6,<3", "pysnmp>=7.1,<8"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pytest-asyncio>=0.24,<2", "ruff>=0.9,<1"]
+
+[project.scripts]
+bcast-netcheck = "bcast_netcheck.cli:app"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

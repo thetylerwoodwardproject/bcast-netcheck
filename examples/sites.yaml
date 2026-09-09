@@ -1,0 +1,47 @@
+# Fictional documentation networks only. These addresses normally will not respond.
+sites:
+  WXYZ:
+    description: 'WXYZ Transmitter Site'
+    router:
+      host: 192.0.2.1
+    devices:
+      encoder:
+        host: 192.0.2.20
+        description: 'STL Encoder'
+        ports:
+          - 22
+          - 80
+          - port: 443
+            name: 'Encoder HTTPS'
+            required: true
+      mod_monitor:
+        host: 192.0.2.30
+        description: 'FM Modulation Monitor'
+        snmp:
+          enabled: true
+          version: '2c'
+          community_env: 'BCAST_SNMP_COMMUNITY'
+      remote_control:
+        host: 192.0.2.40
+        description: 'Remote Control'
+        snmp: true
+    gateways:
+      primary:
+        host: 192.0.2.1
+        provider: 'Primary Carrier'
+      backup:
+        host: 198.51.100.1
+        provider: 'Backup Carrier'
+    dns:
+      server: 192.0.2.53
+      test_name: encoder.example
+    ntp:
+      server: 192.0.2.123
+  KXYZ:
+    description: 'KXYZ Fictional Studio'
+    devices:
+      encoder:
+        host: 203.0.113.20
+        expected_mtu: 1420
+        ports:
+          - 443

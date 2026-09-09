@@ -1,0 +1,36 @@
+name: tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: sudo apt-get update && sudo apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath
+      - run: python -m pip install -e '.[dev]'
+      - run: pytest -q
+      - run: ruff check . && ruff format --check .
+      - run: bcast-netcheck --help
+      - name: Linux local utility smoke test
+        run: |
+          python - <<'PY'
+          import asyncio
+          from bcast_netcheck.checks import ping, route
+          from bcast_netcheck.config import Settings
+          async def main():
+              settings = Settings(timeout=3)
+              icmp = await ping.check('127.0.0.1', settings)
+              routing = await route.check('127.0.0.1', settings)
+              assert icmp.status == 'PASS', icmp
+              assert icmp.details['received'] == 5, icmp
+              assert routing.status == 'PASS', routing
+              assert routing.details['interface'] == 'lo', routing
+          asyncio.run(main())
+          PY
